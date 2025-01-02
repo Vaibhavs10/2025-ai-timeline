@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Timeline Template</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f4f9;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      overflow-x: scroll;
+      scrollbar-width: thin;
+      -ms-overflow-style: -ms-autohiding-scrollbar;
+    }
+    .timeline {
+      display: flex;
+      flex-direction: row;
+      padding: 20px;
+      gap: 10px;
+      overflow-x: auto;
+    }
+    .month {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 200px;
+    }
+    .month h3 {
+      margin: 0;
+      padding: 10px;
+      background-color: #6200ea;
+      color: white;
+      border-radius: 5px;
+      text-align: center;
+    }
+    .event {
+      background-color: white;
+      padding: 10px;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      position: relative;
+      transition: all 0.3s ease;
+    }
+    
+    /* Make category-1 events more prominent */
+    .event:has(.tag.open-source) {
+      background-color: #e8f5e9;
+      border-left: 4px solid #4caf50;
+      transform: scale(1.02);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Slightly dim category-2 events */
+    .event:has(.tag.api-only) {
+      background-color: #fafafa;
+      border-left: 4px solid #f44336;
+    }
+    
+    /* Hover effects */
+    .event:has(.tag.open-source):hover {
+      transform: scale(1.03);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+    .event h4 {
+      margin: 0;
+      font-size: 14px;
+    }
+    .event p {
+      margin: 5px 0 0;
+      font-size: 12px;
+      color: #666;
+    }
+    .tag {
+      display: inline-block;
+      padding: 2px 5px;
+      font-size: 10px;
+      border-radius: 3px;
+      margin-top: 5px;
+    }
+    .tag.open-source {
+      background-color: #4caf50;
+      color: white;
+    }
+    .tag.api-only {
+      background-color: #f44336;
+      color: white;
+    }
+    .event p a {
+      color: #4caf50;
+      text-decoration: none;
+    }
+    .event p a:hover {
+      text-decoration: underline;
+    }
+    .toggle-container {
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+      gap: 10px;
+    }
+    .toggle-button {
+      padding: 8px 16px;
+      border: none;
+      color: black;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .toggle-button.active {
+      color: white;
+    }
+    .toggle-button.open-source {
+      background-color: #e8f5e9;
+      border: 1px solid #4caf50;
+      color: #4caf50;
+    }
+    .toggle-button.open-source.active {
+      background-color: #4caf50;
+      color: white;
+    }
+    .toggle-button.api-only {
+      background-color: #ffebee;
+      border: 1px solid #f44336;
+      color: #f44336;
+    }
+    .toggle-button.api-only.active {
+      background-color: #f44336;
+      color: white;
+    }
+    .toggle-button.show-all {
+      background-color: #e3f2fd;
+      border: 1px solid #2196f3;
+      color: #2196f3;
+    }
+    .toggle-button.show-all.active {
+      background-color: #2196f3;
+      color: white;
+    }
+    .header-link {
+      text-align: center;
+      padding: 10px;
+      background-color: #24292e;
+      color: white;
+    }
+    .header-link a {
+      color: white;
+      text-decoration: none;
+    }
+    .header-link a:hover {
+      text-decoration: underline;
+    }
+    /* Scrollbar styles */
+    body::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    body::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    body::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 4px;
+    }
+
+    body::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="header-link">
+    <a href="#" target="_blank">View on GitHub</a>
+  </div>
+  <div class="toggle-container">
+    <button class="toggle-button show-all active" onclick="filterEvents('all')">Show All</button>
+    <button class="toggle-button open-source" onclick="filterEvents('open-source')">Open Weights Only</button>
+    <button class="toggle-button api-only" onclick="filterEvents('api-only')">API Only</button>
+  </div>
+  <div class="timeline">
+    <!-- Month Template -->
+    <div class="month">
+      <h3>Month YYYY</h3>
+      <!-- Event Template -->
+      <div class="event">
+        <h4>Event Title</h4>
+        <p>Event description. Add a link like this: <a href="#" target="_blank">link text</a></p>
+        <span class="tag open-source">Open Weights</span>
+      </div>
+      <!-- API Only Event Template -->
+      <div class="event">
+        <h4>API Event Title</h4>
+        <p>API event description</p>
+        <span class="tag api-only">API Only</span>
+      </div>
+      <!-- Add more events as needed -->
+    </div>
+    <!-- Add more months as needed -->
+  </div>
+  <script>
+    function updateCounts() {
+      const openSourceCount = document.querySelectorAll('.tag.open-source').length;
+      const apiOnlyCount = document.querySelectorAll('.tag.api-only').length;
+      
+      // Add count display elements if needed
+      // document.getElementById('open-source-count').textContent = openSourceCount;
+      // document.getElementById('api-only-count').textContent = apiOnlyCount;
+    }
+
+    function filterEvents(filter) {
+        // Update active button state
+        document.querySelectorAll('.toggle-button').forEach(button => {
+            button.classList.remove('active');
+            if (button.classList.contains(filter)) {
+                button.classList.add('active');
+            }
+        });
+
+        // Filter events
+        const events = document.querySelectorAll('.event');
+        events.forEach(event => {
+            if (filter === 'all') {
+                event.style.display = 'block';
+            } else {
+                const hasTag = event.querySelector(`.tag.${filter}`) !== null;
+                event.style.display = hasTag ? 'block' : 'none';
+            }
+        });
+
+        // Check for empty months and hide them
+        const months = document.querySelectorAll('.month');
+        months.forEach(month => {
+            const visibleEvents = Array.from(month.querySelectorAll('.event')).filter(event => 
+                event.style.display !== 'none'
+            );
+            month.style.display = visibleEvents.length > 0 ? 'flex' : 'none';
+        });
+
+        // Update counts after filtering
+        updateCounts();
+    }
+
+    // Initial count update
+    document.addEventListener('DOMContentLoaded', updateCounts);
+  </script>
+</body>
+</html> 
