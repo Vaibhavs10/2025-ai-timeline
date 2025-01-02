@@ -140,17 +140,17 @@
       background-color: #2196f3;
       color: white;
     }
-    .header-link {
+    .github-link {
       text-align: center;
       padding: 10px;
       background-color: #24292e;
       color: white;
     }
-    .header-link a {
+    .github-link a {
       color: white;
       text-decoration: none;
     }
-    .header-link a:hover {
+    .github-link a:hover {
       text-decoration: underline;
     }
     /* Scrollbar styles */
@@ -173,13 +173,24 @@
   </style>
 </head>
 <body>
-  <div class="header-link">
+  <div class="github-link">
     <a href="#" target="_blank">View on GitHub</a>
   </div>
   <div class="toggle-container">
     <button class="toggle-button show-all active" onclick="filterEvents('all')">Show All</button>
     <button class="toggle-button open-source" onclick="filterEvents('open-source')">Open Weights Only</button>
     <button class="toggle-button api-only" onclick="filterEvents('api-only')">API Only</button>
+  </div>
+  <div class="counter-container" style="text-align: center; padding: 20px; background-color: white; margin: 10px 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+    <span class="counter-item">
+      <span class="counter-label" style="color: #4caf50; font-weight: bold;">Open Source Models:</span>
+      <span class="counter-number" id="open-source-count" style="font-size: 1.2em; margin-left: 5px; color: #2e7d32;">0</span>
+    </span>
+    <span style="margin: 0 20px; color: #ddd;">|</span>
+    <span class="counter-item">
+      <span class="counter-label" style="color: #f44336; font-weight: bold;">API Only Models:</span>
+      <span class="counter-number" id="api-only-count" style="font-size: 1.2em; margin-left: 5px; color: #c62828;">0</span>
+    </span>
   </div>
   <div class="timeline">
     <!-- Month Template -->
@@ -197,18 +208,15 @@
         <p>API event description</p>
         <span class="tag api-only">API Only</span>
       </div>
-      <!-- Add more events as needed -->
     </div>
-    <!-- Add more months as needed -->
   </div>
   <script>
     function updateCounts() {
       const openSourceCount = document.querySelectorAll('.tag.open-source').length;
       const apiOnlyCount = document.querySelectorAll('.tag.api-only').length;
       
-      // Add count display elements if needed
-      // document.getElementById('open-source-count').textContent = openSourceCount;
-      // document.getElementById('api-only-count').textContent = apiOnlyCount;
+      document.getElementById('open-source-count').textContent = openSourceCount;
+      document.getElementById('api-only-count').textContent = apiOnlyCount;
     }
 
     function filterEvents(filter) {
