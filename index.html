@@ -26,7 +26,8 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
-      min-width: 200px;
+      width: 300px;
+      flex: 0 0 300px;
     }
     .month h3 {
       margin: 0;
@@ -95,56 +96,12 @@
     .event p a:hover {
       text-decoration: underline;
     }
-    .toggle-container {
-      display: flex;
-      justify-content: center;
-      padding: 20px;
-      gap: 10px;
-    }
-    .toggle-button {
-      padding: 8px 16px;
-      border: none;
-      color: black;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 14px;
-      transition: background-color 0.3s, color 0.3s;
-    }
-    .toggle-button.active {
-      color: white;
-    }
-    .toggle-button.open-source {
-      background-color: #e8f5e9;
-      border: 1px solid #4caf50;
-      color: #4caf50;
-    }
-    .toggle-button.open-source.active {
-      background-color: #4caf50;
-      color: white;
-    }
-    .toggle-button.api-only {
-      background-color: #ffebee;
-      border: 1px solid #f44336;
-      color: #f44336;
-    }
-    .toggle-button.api-only.active {
-      background-color: #f44336;
-      color: white;
-    }
-    .toggle-button.show-all {
-      background-color: #e3f2fd;
-      border: 1px solid #2196f3;
-      color: #2196f3;
-    }
-    .toggle-button.show-all.active {
-      background-color: #2196f3;
-      color: white;
-    }
     .github-link {
       text-align: center;
-      padding: 10px;
+      padding: 8px;
       background-color: #24292e;
       color: white;
+      font-size: 14px;
     }
     .github-link a {
       color: white;
@@ -170,43 +127,165 @@
     body::-webkit-scrollbar-thumb:hover {
       background: #555;
     }
+
+    .tag.text {
+      background-color: #9c27b0;
+      color: white;
+    }
+    .tag.audio {
+      background-color: #ff9800;
+      color: white;
+    }
+    .tag.vision {
+      background-color: #03a9f4;
+      color: white;
+    }
+    .tag.multimodal {
+      background-color: #795548;
+      color: white;
+    }
+    .tag.announcement {
+      background-color: #607d8b;
+      color: white;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      padding: 20px 0;
+      background-color: white;
+      border-bottom: 1px solid #eee;
+    }
+
+    .toggle-container {
+      display: flex;
+      gap: 8px;
+    }
+
+    .dropdown-filters {
+      display: flex;
+      gap: 8px;
+    }
+
+    .toggle-button {
+      padding: 6px 12px;
+      border: 1px solid #ddd;
+      border-radius: 15px;
+      background-color: white;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .toggle-button.active {
+      background-color: #2196f3;
+      border-color: #2196f3;
+      color: white;
+    }
+
+    select {
+      padding: 6px 12px;
+      border: 1px solid #ddd;
+      border-radius: 15px;
+      font-size: 13px;
+      background-color: white;
+      cursor: pointer;
+    }
+
+    .counter-container {
+      text-align: center;
+      padding: 15px;
+      font-size: 14px;
+      color: #666;
+      background-color: #f8f9fa;
+    }
+
+    .counter-item span {
+      font-weight: bold;
+      color: #2196f3;
+    }
+
+    .counter-divider {
+      margin: 0 10px;
+      color: #ddd;
+    }
   </style>
 </head>
 <body>
   <div class="github-link">
     <a href="#" target="_blank">View on GitHub</a>
   </div>
-  <div class="toggle-container">
-    <button class="toggle-button show-all active" onclick="filterEvents('all')">Show All</button>
-    <button class="toggle-button open-source" onclick="filterEvents('open-source')">Open Weights Only</button>
-    <button class="toggle-button api-only" onclick="filterEvents('api-only')">API Only</button>
+  <div class="filter-group">
+    <div class="toggle-container">
+      <button class="toggle-button active" data-filter="all">All Models</button>
+      <button class="toggle-button" data-filter="open-source">Open Source</button>
+      <button class="toggle-button" data-filter="api-only">API Only</button>
+    </div>
+    <div class="dropdown-filters">
+      <select id="modalityFilter" onchange="filterByModality(this.value)">
+        <option value="all">All Modalities</option>
+        <option value="text">Text</option>
+        <option value="audio">Audio</option>
+        <option value="vision">Vision</option>
+        <option value="multimodal">Multimodal</option>
+      </select>
+      <select id="typeFilter" onchange="filterByType(this.value)">
+        <option value="all">All Types</option>
+        <option value="model">Models</option>
+        <option value="announcement">Announcements</option>
+      </select>
+    </div>
   </div>
-  <div class="counter-container" style="text-align: center; padding: 20px; background-color: white; margin: 10px 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+  <div class="counter-container">
     <span class="counter-item">
-      <span class="counter-label" style="color: #4caf50; font-weight: bold;">Open Source Models:</span>
-      <span class="counter-number" id="open-source-count" style="font-size: 1.2em; margin-left: 5px; color: #2e7d32;">0</span>
+      <span id="open-source-count">0</span> Open Source
     </span>
-    <span style="margin: 0 20px; color: #ddd;">|</span>
+    <span class="counter-divider">·</span>
     <span class="counter-item">
-      <span class="counter-label" style="color: #f44336; font-weight: bold;">API Only Models:</span>
-      <span class="counter-number" id="api-only-count" style="font-size: 1.2em; margin-left: 5px; color: #c62828;">0</span>
+      <span id="api-only-count">0</span> API Only
     </span>
   </div>
   <div class="timeline">
-    <!-- Month Template -->
     <div class="month">
-      <h3>Month YYYY</h3>
-      <!-- Event Template -->
+      <h3>January 2025</h3>
       <div class="event">
-        <h4>Event Title</h4>
-        <p>Event description. Add a link like this: <a href="#" target="_blank">link text</a></p>
-        <span class="tag open-source">Open Weights</span>
-      </div>
-      <!-- API Only Event Template -->
-      <div class="event">
-        <h4>API Event Title</h4>
-        <p>API event description</p>
+        <h4>GPT-5 Announcement</h4>
+        <p>OpenAI announces GPT-5 development completion</p>
         <span class="tag api-only">API Only</span>
+        <span class="tag text">Text</span>
+        <span class="tag announcement">Announcement</span>
+      </div>
+      <div class="event">
+        <h4>Anthropic Claude 4</h4>
+        <p>Anthropic releases Claude 4 with enhanced reasoning</p>
+        <span class="tag api-only">API Only</span>
+        <span class="tag text">Text</span>
+      </div>
+    </div>
+    <div class="month">
+      <h3>February 2025</h3>
+      <div class="event">
+        <h4>Meta's AudioCraft 2.0</h4>
+        <p>Open source audio generation model</p>
+        <span class="tag open-source">Open Weights</span>
+        <span class="tag audio">Audio</span>
+      </div>
+      <div class="event">
+        <h4>Google Gemini Ultra</h4>
+        <p>Next generation multimodal model</p>
+        <span class="tag api-only">API Only</span>
+        <span class="tag multimodal">Multimodal</span>
+      </div>
+    </div>
+    <div class="month">
+      <h3>March 2025</h3>
+      <div class="event">
+        <h4>Stability AI ImageGen V5</h4>
+        <p>Open source image generation</p>
+        <span class="tag open-source">Open Weights</span>
+        <span class="tag vision">Vision</span>
       </div>
     </div>
   </div>
@@ -219,41 +298,74 @@
       document.getElementById('api-only-count').textContent = apiOnlyCount;
     }
 
-    function filterEvents(filter) {
-        // Update active button state
-        document.querySelectorAll('.toggle-button').forEach(button => {
-            button.classList.remove('active');
-            if (button.classList.contains(filter)) {
-                button.classList.add('active');
-            }
-        });
+    let currentFilters = {
+      category: 'all',
+      modality: 'all',
+      type: 'all'
+    };
 
-        // Filter events
-        const events = document.querySelectorAll('.event');
-        events.forEach(event => {
-            if (filter === 'all') {
-                event.style.display = 'block';
-            } else {
-                const hasTag = event.querySelector(`.tag.${filter}`) !== null;
-                event.style.display = hasTag ? 'block' : 'none';
-            }
-        });
-
-        // Check for empty months and hide them
-        const months = document.querySelectorAll('.month');
-        months.forEach(month => {
-            const visibleEvents = Array.from(month.querySelectorAll('.event')).filter(event => 
-                event.style.display !== 'none'
-            );
-            month.style.display = visibleEvents.length > 0 ? 'flex' : 'none';
-        });
-
-        // Update counts after filtering
-        updateCounts();
+    function filterByModality(modality) {
+      currentFilters.modality = modality;
+      applyFilters();
     }
 
-    // Initial count update
-    document.addEventListener('DOMContentLoaded', updateCounts);
+    function filterByType(type) {
+      currentFilters.type = type;
+      applyFilters();
+    }
+
+    function filterEvents(category) {
+      // Update button states
+      const buttons = document.querySelectorAll('.toggle-button');
+      buttons.forEach(button => {
+        button.classList.remove('active');
+        if (button.getAttribute('data-filter') === category) {
+          button.classList.add('active');
+        }
+      });
+
+      currentFilters.category = category;
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const events = document.querySelectorAll('.event');
+      
+      events.forEach(event => {
+        const matchesCategory = currentFilters.category === 'all' || 
+          event.querySelector(`.tag.${currentFilters.category}`);
+        const matchesModality = currentFilters.modality === 'all' || 
+          event.querySelector(`.tag.${currentFilters.modality}`);
+        const matchesType = currentFilters.type === 'all' || 
+          (currentFilters.type === 'announcement' ? 
+            event.querySelector('.tag.announcement') : 
+            !event.querySelector('.tag.announcement'));
+
+        event.style.display = (matchesCategory && matchesModality && matchesType) ? 'block' : 'none';
+      });
+
+      // Check for empty months and hide them
+      const months = document.querySelectorAll('.month');
+      months.forEach(month => {
+        const visibleEvents = Array.from(month.querySelectorAll('.event')).filter(event => 
+          event.style.display !== 'none'
+        );
+        month.style.display = visibleEvents.length > 0 ? 'flex' : 'none';
+      });
+
+      updateCounts();
+    }
+
+    // Update event listeners when the page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      const buttons = document.querySelectorAll('.toggle-button');
+      buttons.forEach(button => {
+        button.addEventListener('click', function() {
+          filterEvents(this.getAttribute('data-filter'));
+        });
+      });
+      updateCounts();
+    });
   </script>
 </body>
 </html> 
